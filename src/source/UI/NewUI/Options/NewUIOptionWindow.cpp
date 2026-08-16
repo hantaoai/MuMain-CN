@@ -69,6 +69,7 @@ static const struct { const char* code; const wchar_t* label; } s_Languages[] = 
     { "tl",    L"Tagalog" },
     { "uk",    L"\u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430" }, // Українська
     { "zh-TW", L"\u7e41\u9ad4\u4e2d\u6587" },                                      // 繁體中文
+    { "zh-CN", L"\u7b80\u4f53\u4e2d\u6587" },                                      // 简体中文
 };
 static const int s_NumLanguages = sizeof(s_Languages) / sizeof(s_Languages[0]);
 
