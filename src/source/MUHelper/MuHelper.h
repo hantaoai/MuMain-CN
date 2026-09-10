@@ -8,6 +8,7 @@
 #include <atomic>
 
 #include "MuHelperData.h"
+#include "TownRun.h"
 
 namespace MUHelper
 {
@@ -29,6 +30,12 @@ namespace MUHelper
 		void TriggerStart();
 		void TriggerStop();
 		bool IsActive() { return m_bActive; }
+
+		// "Recommended AFK spots" window entry point: prime the helper runtime and
+		// hand off to TownRun (town buff -> potions -> warp back -> walk to the spot).
+		// Called by TownRun when the walk-home leg reaches its destination.
+		void GoAfkSpot(int x, int y);
+		void OnAfkArrived();
 		void AddCost(int iCost) { m_iTotalCost += iCost; }
 		int GetTotalCost() { return m_iTotalCost; }
 
@@ -75,6 +82,7 @@ namespace MUHelper
 
 	private:
 		ConfigData m_config;
+		TownRun m_townRun;
 		POINT m_posOriginal;
 		std::thread m_timerThread;
 		std::atomic<bool> m_bActive;

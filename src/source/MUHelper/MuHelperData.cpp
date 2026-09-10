@@ -144,6 +144,10 @@ namespace MUHelper
 		netData.bAutoAcceptFriend = gameData.bAutoAcceptFriend ? 1 : 0;
 		netData.bAutoAcceptGuild = gameData.bAutoAcceptGuild ? 1 : 0;
 		netData.bFallbackBasicAttack = gameData.bFallbackBasicAttack ? 1 : 0;
+		netData.bPickMagicItems = gameData.bPickMagicItems ? 1 : 0;
+		netData.bAutoNpcBuff = gameData.bAutoNpcBuff ? 1 : 0;
+		netData.bAutoBuyPotions = gameData.bAutoBuyPotions ? 1 : 0;
+		netData.bAutoStoreVault = gameData.bAutoStoreVault ? 1 : 0;
 	}
 
 	void ConfigDataSerDe::Deserialize(const PRECEIVE_MUHELPER_DATA& netData, ConfigData& gameData)
@@ -235,6 +239,10 @@ namespace MUHelper
 		gameData.bAutoAcceptFriend = (bool)netData.bAutoAcceptFriend;
 		gameData.bAutoAcceptGuild = (bool)netData.bAutoAcceptGuild;
 		gameData.bFallbackBasicAttack = (bool)netData.bFallbackBasicAttack;
+		gameData.bPickMagicItems = (bool)netData.bPickMagicItems;
+		gameData.bAutoNpcBuff = (bool)netData.bAutoNpcBuff;
+		gameData.bAutoBuyPotions = (bool)netData.bAutoBuyPotions;
+		gameData.bAutoStoreVault = (bool)netData.bAutoStoreVault;
 	}
 
 }

@@ -663,6 +663,9 @@ void RequireClass(ITEM_ATTRIBUTE* pItem)
         {
             iTextColor = TEXT_COLOR_DARKRED;
         }
+        const wchar_t* equipFmt = (iTextColor == TEXT_COLOR_WHITE)
+            ? I18N::Game::CanBeEquippedByS
+            : I18N::Game::CannotBeEquippedByS;  // red row: item is NOT equippable by that class
 
         switch (i)
         {
@@ -670,17 +673,17 @@ void RequireClass(ITEM_ATTRIBUTE* pItem)
         {
             if (byRequireClass == 1)
             {
-                mu_swprintf(TextList[TextNum], I18N::Game::CanBeEquippedByS, I18N::Game::DarkWizard);
+                mu_swprintf(TextList[TextNum], equipFmt, I18N::Game::DarkWizard);
                 TextListColor[TextNum] = iTextColor;
             }
             else if (byRequireClass == 2)
             {
-                mu_swprintf(TextList[TextNum], I18N::Game::CanBeEquippedByS, I18N::Game::SoulMaster);
+                mu_swprintf(TextList[TextNum], equipFmt, I18N::Game::SoulMaster);
                 TextListColor[TextNum] = iTextColor;
             }
             else if (byRequireClass == 3)
             {
-                mu_swprintf(TextList[TextNum], I18N::Game::CanBeEquippedByS, I18N::Game::GrandMaster);
+                mu_swprintf(TextList[TextNum], equipFmt, I18N::Game::GrandMaster);
                 TextListColor[TextNum] = iTextColor;
             }
 
@@ -691,17 +694,17 @@ void RequireClass(ITEM_ATTRIBUTE* pItem)
         {
             if (byRequireClass == 1)
             {
-                mu_swprintf(TextList[TextNum], I18N::Game::CanBeEquippedByS, I18N::Game::DarkKnight);
+                mu_swprintf(TextList[TextNum], equipFmt, I18N::Game::DarkKnight);
                 TextListColor[TextNum] = iTextColor;
             }
             else if (byRequireClass == 2)
             {
-                mu_swprintf(TextList[TextNum], I18N::Game::CanBeEquippedByS, I18N::Game::BladeKnight);
+                mu_swprintf(TextList[TextNum], equipFmt, I18N::Game::BladeKnight);
                 TextListColor[TextNum] = iTextColor;
             }
             else if (byRequireClass == 3)
             {
-                mu_swprintf(TextList[TextNum], I18N::Game::CanBeEquippedByS, I18N::Game::BladeMaster);
+                mu_swprintf(TextList[TextNum], equipFmt, I18N::Game::BladeMaster);
                 TextListColor[TextNum] = iTextColor;
             }
 
@@ -712,17 +715,17 @@ void RequireClass(ITEM_ATTRIBUTE* pItem)
         {
             if (byRequireClass == 1)
             {
-                mu_swprintf(TextList[TextNum], I18N::Game::CanBeEquippedByS, I18N::Game::Elf);
+                mu_swprintf(TextList[TextNum], equipFmt, I18N::Game::Elf);
                 TextListColor[TextNum] = iTextColor;
             }
             else if (byRequireClass == 2)
             {
-                mu_swprintf(TextList[TextNum], I18N::Game::CanBeEquippedByS, I18N::Game::MuseElf);
+                mu_swprintf(TextList[TextNum], equipFmt, I18N::Game::MuseElf);
                 TextListColor[TextNum] = iTextColor;
             }
             else if (byRequireClass == 3)
             {
-                mu_swprintf(TextList[TextNum], I18N::Game::CanBeEquippedByS, I18N::Game::HighElf);
+                mu_swprintf(TextList[TextNum], equipFmt, I18N::Game::HighElf);
                 TextListColor[TextNum] = iTextColor;
             }
 
@@ -733,12 +736,12 @@ void RequireClass(ITEM_ATTRIBUTE* pItem)
         {
             if (byRequireClass == 1)
             {
-                mu_swprintf(TextList[TextNum], I18N::Game::CanBeEquippedByS, I18N::Game::MagicGladiator);
+                mu_swprintf(TextList[TextNum], equipFmt, I18N::Game::MagicGladiator);
                 TextListColor[TextNum] = iTextColor;
             }
             else if (byRequireClass == 3)
             {
-                mu_swprintf(TextList[TextNum], I18N::Game::CanBeEquippedByS, I18N::Game::DualMaster);
+                mu_swprintf(TextList[TextNum], equipFmt, I18N::Game::DualMaster);
                 TextListColor[TextNum] = iTextColor;
             }
 
@@ -749,12 +752,12 @@ void RequireClass(ITEM_ATTRIBUTE* pItem)
         {
             if (byRequireClass == 1)
             {
-                mu_swprintf(TextList[TextNum], I18N::Game::CanBeEquippedByS, I18N::Game::DarkLord);
+                mu_swprintf(TextList[TextNum], equipFmt, I18N::Game::DarkLord);
                 TextListColor[TextNum] = iTextColor;
             }
             else if (byRequireClass == 3)
             {
-                mu_swprintf(TextList[TextNum], I18N::Game::CanBeEquippedByS, I18N::Game::LordEmperor);
+                mu_swprintf(TextList[TextNum], equipFmt, I18N::Game::LordEmperor);
                 TextListColor[TextNum] = iTextColor;
             }
 
@@ -765,17 +768,17 @@ void RequireClass(ITEM_ATTRIBUTE* pItem)
         {
             if (byRequireClass == 1)
             {
-                mu_swprintf(TextList[TextNum], I18N::Game::CanBeEquippedByS, I18N::Game::Summoner);
+                mu_swprintf(TextList[TextNum], equipFmt, I18N::Game::Summoner);
                 TextListColor[TextNum] = iTextColor;
             }
             else if (byRequireClass == 2)
             {
-                mu_swprintf(TextList[TextNum], I18N::Game::CanBeEquippedByS, I18N::Game::BloodySummoner);
+                mu_swprintf(TextList[TextNum], equipFmt, I18N::Game::BloodySummoner);
                 TextListColor[TextNum] = iTextColor;
             }
             else if (byRequireClass == 3)
             {
-                mu_swprintf(TextList[TextNum], I18N::Game::CanBeEquippedByS, I18N::Game::DimensionMaster);
+                mu_swprintf(TextList[TextNum], equipFmt, I18N::Game::DimensionMaster);
                 TextListColor[TextNum] = iTextColor;
             }
 
@@ -786,12 +789,12 @@ void RequireClass(ITEM_ATTRIBUTE* pItem)
         {
             if (byRequireClass == 1)
             {
-                mu_swprintf(TextList[TextNum], I18N::Game::CanBeEquippedByS, I18N::Game::RageFighter);
+                mu_swprintf(TextList[TextNum], equipFmt, I18N::Game::RageFighter);
                 TextListColor[TextNum] = iTextColor;
             }
             else if (byRequireClass == 3)
             {
-                mu_swprintf(TextList[TextNum], I18N::Game::CanBeEquippedByS, I18N::Game::FistMaster);
+                mu_swprintf(TextList[TextNum], equipFmt, I18N::Game::FistMaster);
                 TextListColor[TextNum] = iTextColor;
             }
             TextBold[TextNum] = false;	TextNum++;
@@ -7996,6 +7999,19 @@ bool IsAncientItem(ITEM* pItem)
 bool IsMoneyItem(ITEM* pItem)
 {
     return pItem->Type == ITEM_ZEN;
+}
+
+bool IsMagicItem(ITEM* pItem)
+{
+    // Matches the blue item-name color logic in the item tooltip:
+    // an item is "blue" when it has a skill, luck, or an追加 option bonus, but is
+    // neither excellent nor ancient (those get their own gold/dark-red name color).
+    if (!pItem || pItem->ExcellentFlags || pItem->AncientDiscriminator)
+    {
+        return false;
+    }
+
+    return pItem->HasSkill || pItem->HasLuck || pItem->OptionLevel > 0;
 }
 
 std::wstring GetItemDisplayName(ITEM* pItem)

@@ -612,14 +612,31 @@ void CNewUIStorageInventory::ProcessToReceiveStorageStatus(BYTE byStatus)
                 {
                     pItemObj = m_pNewInventoryCtrl->FindItemAtPt(
                         m_nBackupMouseX, m_nBackupMouseY);
+                    if (pItemObj == nullptr)
+                    {
+                        // The item at the backup position was moved/removed
+                        // before the password-ack arrived; nothing to move.
+                        InitBackupItemInfo();
+                        break;
+                    }
                     nStorageIndex
                         = pItemObj->y * m_pNewInventoryCtrl->GetNumberOfColumn()
                         + pItemObj->x;
                 }
                 else
                 {
+                    if (g_pPickedItem == nullptr)
+                    {
+                        InitBackupItemInfo();
+                        break;
+                    }
                     nStorageIndex = g_pPickedItem->GetSourceLinealPos();
                     pItemObj = g_pPickedItem->GetItem();
+                    if (pItemObj == nullptr)
+                    {
+                        InitBackupItemInfo();
+                        break;
+                    }
                 }
 
                 SendRequestEquipmentItem(

@@ -105,6 +105,14 @@ namespace MUHelper
 		bool bAutoAcceptFriend = false;
 		bool bAutoAcceptGuild = false;
 		bool bFallbackBasicAttack = true;
+
+		// Extended client-local settings (byte index 33, bits 4-7).
+		// Shared with the OpenMU offline bot (MuHelperSettingsSerializer reads
+		// the same bits), so keep positions in sync across both codebases.
+		bool bPickMagicItems = false;      // bit 4: 拾取蓝装
+		bool bAutoNpcBuff = false;         // bit 5: 自动领 NPC Buff
+		bool bAutoBuyPotions = false;      // bit 6: 没红/没蓝自动买
+		bool bAutoStoreVault = false;      // bit 7: 满包自动存仓库
 	} ConfigData;
 
 	class ConfigDataSerDe {

@@ -53,7 +53,7 @@ enum SKILL_TOOLTIP_RENDER_POINT
     STRP_BOOTOMRIGHT
 };
 
-// ¼¼À²Á¤º¸
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 extern int		g_nTaxRate;
 extern int		g_nChaosTaxRate;
@@ -77,7 +77,7 @@ extern int			GuildTotalScore;
 extern int AllRepairGold;
 
 //////////////////////////////////////////////////////////////////////////
-// text °ü·Ã
+// text ï¿½ï¿½ï¿½ï¿½
 //////////////////////////////////////////////////////////////////////////
 extern wchar_t TextList[50][100];
 extern int TextListColor[50];
@@ -198,6 +198,7 @@ bool IsJewelItem(ITEM* pItem);
 bool IsExcellentItem(ITEM* pItem);
 bool IsAncientItem(ITEM* pItem);
 bool IsMoneyItem(ITEM* pItem);
+bool IsMagicItem(ITEM* pItem);
 
 void ComputeItemInfo(int iHelpItem);
 void RenderHelpCategory(int iColumnType, int Pos_x, int Pos_y);

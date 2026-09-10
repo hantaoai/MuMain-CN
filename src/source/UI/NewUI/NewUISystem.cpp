@@ -86,6 +86,7 @@ CNewUISystem::CNewUISystem()
     m_pNewSetItemExplanation = nullptr;
     m_pNewQuickCommandWindow = nullptr;
     m_pNewMoveCommandWindow = nullptr;
+    m_pNewAfkSpotWindow = nullptr;
     m_pNewSiegeWarfare = nullptr;
     m_pNewItemEnduranceInfo = nullptr;
     m_pNewBuffWindow = nullptr;
@@ -376,6 +377,10 @@ bool CNewUISystem::LoadMainSceneInterface()
     if (m_pNewMoveCommandWindow->Create(m_pNewUIMng, 1, 1) == false)
         return false;
 
+    m_pNewAfkSpotWindow = new CNewUIAfkSpotWindow;
+    if (m_pNewAfkSpotWindow->Create(m_pNewUIMng, 380, 120) == false)
+        return false;
+
     m_pNewDuelWindow = new CNewUIDuelWindow;
     if (m_pNewDuelWindow->Create(m_pNewUIMng, 509, 359) == false)
     {
@@ -574,6 +579,7 @@ void CNewUISystem::UnloadMainSceneInterface()
     SAFE_DELETE(m_pNewCommandWindow);
     SAFE_DELETE(m_pNewHeroPositionInfo);
     SAFE_DELETE(m_pNewMoveCommandWindow);
+    SAFE_DELETE(m_pNewAfkSpotWindow);
     SAFE_DELETE(m_pNewUIHotKey);
     SAFE_DELETE(m_pNewSiegeWarfare);
     SAFE_DELETE(m_pNewItemEnduranceInfo);
@@ -997,6 +1003,10 @@ void CNewUISystem::Show(DWORD dwKey)
         Hide(INTERFACE_SETITEM_EXPLANATION);
         m_pNewMoveCommandWindow->OpenningProcess();
     }
+    else if (dwKey == INTERFACE_AFK_SPOTS)
+    {
+        m_pNewAfkSpotWindow->OpenningProcess();
+    }
     else if (dwKey == INTERFACE_CHATINPUTBOX)
     {
         m_pNewChatInputBox->OpenningProcess();
@@ -1416,6 +1426,10 @@ void CNewUISystem::Hide(DWORD dwKey)
     else if (dwKey == INTERFACE_MOVEMAP)
     {
         m_pNewCommandWindow->ClosingProcess();
+    }
+    else if (dwKey == INTERFACE_AFK_SPOTS)
+    {
+        m_pNewAfkSpotWindow->ClosingProcess();
     }
     else if (dwKey == INTERFACE_CHATINPUTBOX)
     {

@@ -92,6 +92,8 @@ namespace SEASON3B
 
         int GetPointedItemIndex();
 
+        CNewUIInventoryCtrl* GetInventoryCtrl() const;
+
         //. Exporting Functions
         void SetStandbyItemKey(DWORD dwItemKey);
         DWORD GetStandbyItemKey() const;

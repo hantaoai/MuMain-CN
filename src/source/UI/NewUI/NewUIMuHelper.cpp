@@ -11,8 +11,17 @@
 #include "UI/NewUI/NewUIMuHelper.h"
 #include "Character/CharacterManager.h"
 #include "MUHelper/MuHelper.h"
+#include "Audio/DSPlaySound.h"
 
 using namespace MUHelper;
+
+// "Recommended AFK spots" entry button: opens CNewUIAfkSpotWindow for the
+// current map. Drawn as a plain text bar above the Save/Init/Close row so it
+// is reachable from every tab.
+static const int AFK_SPOTS_BTN_X = 12;
+static const int AFK_SPOTS_BTN_Y = 358;
+static const int AFK_SPOTS_BTN_W = 165;
+static const int AFK_SPOTS_BTN_H = 26;
 
 // defining constants naming since the original code hard coded these ids
 
@@ -45,7 +54,11 @@ enum ECheckBoxId: uint16_t
     CHECKBOX_ID_DR_ATTACK_CEASE,
     CHECKBOX_ID_DR_ATTACK_AUTO,
     CHECKBOX_ID_DR_ATTACK_TOGETHER,
-    CHECKBOX_ID_FALLBACK_BASIC_ATTACK
+    CHECKBOX_ID_FALLBACK_BASIC_ATTACK,
+    CHECKBOX_ID_PICK_MAGIC,
+    CHECKBOX_ID_AUTO_NPC_BUFF,
+    CHECKBOX_ID_AUTO_BUY_POTIONS,
+    CHECKBOX_ID_AUTO_STORE_VAULT
 };
 
 enum EButtonId : uint16_t
@@ -232,6 +245,10 @@ void CNewUIMuHelper::InitButtons()
     RegisterBtnCharacter(Summoner, BUTTON_ID_POTION_CONFIG_SUMMY);
 }
 
+// Labels for the MU Helper features added on top of the upstream UI live in the
+// resx resource dll as I18N::Game::PickMagicItems / AutoTownBuff / AutoBuyPotions /
+// AutoStoreToVault (Chinese: 拾取蓝装 / 自动领取 Buff / 自动购买药水 / 自动存入仓库).
+
 void CNewUIMuHelper::InitCheckBox()
 {
     InsertCheckBox(IMAGE_CHECKBOX_BTN, m_Pos.x + 79, m_Pos.y + 80, 15, 15, 0, &I18N::Game::Potion, CHECKBOX_ID_POTION, 0);
@@ -259,6 +276,12 @@ void CNewUIMuHelper::InitCheckBox()
     InsertCheckBox(IMAGE_CHECKBOX_BTN, m_Pos.x + 22, m_Pos.y + 185, 15, 15, 0, &I18N::Game::Zen, CHECKBOX_ID_PICK_ZEN, 1);
     InsertCheckBox(IMAGE_CHECKBOX_BTN, m_Pos.x + 85, m_Pos.y + 185, 15, 15, 0, &I18N::Game::ExcellentItem, CHECKBOX_ID_PICK_EXCELLENT, 1);
     InsertCheckBox(IMAGE_CHECKBOX_BTN, m_Pos.x + 22, m_Pos.y + 200, 15, 15, 0, &I18N::Game::AddExtraItem, CHECKBOX_ID_ADD_OTHER_ITEM, 1);
+    InsertCheckBox(IMAGE_CHECKBOX_BTN, m_Pos.x + 85, m_Pos.y + 200, 15, 15, 0, &I18N::Game::PickMagicItems, CHECKBOX_ID_PICK_MAGIC, 1);
+
+    // Town-run automation (online client + offline ghost share these bits).
+    InsertCheckBox(IMAGE_CHECKBOX_BTN, m_Pos.x + 18, m_Pos.y + 142, 15, 15, 0, &I18N::Game::AutoTownBuff, CHECKBOX_ID_AUTO_NPC_BUFF, 2);
+    InsertCheckBox(IMAGE_CHECKBOX_BTN, m_Pos.x + 18, m_Pos.y + 157, 15, 15, 0, &I18N::Game::AutoBuyPotions, CHECKBOX_ID_AUTO_BUY_POTIONS, 2);
+    InsertCheckBox(IMAGE_CHECKBOX_BTN, m_Pos.x + 18, m_Pos.y + 172, 15, 15, 0, &I18N::Game::AutoStoreToVault, CHECKBOX_ID_AUTO_STORE_VAULT, 2);
     //--
 
     InsertCheckBox(IMAGE_MACROUI_HELPER_OPTIONBUTTON, m_Pos.x + 94, m_Pos.y + 235, 15, 15, 0, &I18N::Game::CeaseAttack, CHECKBOX_ID_DR_ATTACK_CEASE, 0);
@@ -284,6 +307,10 @@ void CNewUIMuHelper::InitCheckBox()
     RegisterBoxCharacter(0xFF, CHECKBOX_ID_PICK_ZEN);
     RegisterBoxCharacter(0xFF, CHECKBOX_ID_PICK_EXCELLENT);
     RegisterBoxCharacter(0xFF, CHECKBOX_ID_ADD_OTHER_ITEM);
+    RegisterBoxCharacter(0xFF, CHECKBOX_ID_PICK_MAGIC);
+    RegisterBoxCharacter(0xFF, CHECKBOX_ID_AUTO_NPC_BUFF);
+    RegisterBoxCharacter(0xFF, CHECKBOX_ID_AUTO_BUY_POTIONS);
+    RegisterBoxCharacter(0xFF, CHECKBOX_ID_AUTO_STORE_VAULT);
     RegisterBoxCharacter(0xFF, CHECKBOX_ID_AUTO_ACCEPT_FRIEND);
     RegisterBoxCharacter(0xFF, CHECKBOX_ID_AUTO_DEFEND);
     RegisterBoxCharacter(0xFF, CHECKBOX_ID_AUTO_ACCEPT_GUILD);
@@ -478,6 +505,15 @@ bool CNewUIMuHelper::UpdateMouseEvent()
     if (!CheckMouseIn(m_Pos.x, m_Pos.y, WINDOW_WIDTH, WINDOW_HEIGHT))
     {
         return true;
+    }
+
+    // "Recommended AFK spots" text bar (works on every tab).
+    if (CheckMouseIn(m_Pos.x + AFK_SPOTS_BTN_X, m_Pos.y + AFK_SPOTS_BTN_Y, AFK_SPOTS_BTN_W, AFK_SPOTS_BTN_H)
+        && IsRelease(VK_LBUTTON))
+    {
+        g_pNewUISystem->Toggle(SEASON3B::INTERFACE_AFK_SPOTS);
+        PlayBuffer(SOUND_CLICK01);
+        return false;
     }
 
     int iButtonId = UpdateMouseBtnList();
@@ -882,6 +918,22 @@ void CNewUIMuHelper::ApplyConfigFromCheckbox(int iCheckboxId, bool bState)
         _TempConfig.bPickExtraItems = bState;
         break;
 
+    case CHECKBOX_ID_PICK_MAGIC:
+        _TempConfig.bPickMagicItems = bState;
+        break;
+
+    case CHECKBOX_ID_AUTO_NPC_BUFF:
+        _TempConfig.bAutoNpcBuff = bState;
+        break;
+
+    case CHECKBOX_ID_AUTO_BUY_POTIONS:
+        _TempConfig.bAutoBuyPotions = bState;
+        break;
+
+    case CHECKBOX_ID_AUTO_STORE_VAULT:
+        _TempConfig.bAutoStoreVault = bState;
+        break;
+
     case CHECKBOX_ID_AUTO_ACCEPT_FRIEND:
         _TempConfig.bAutoAcceptFriend = bState;
         break;
@@ -1034,6 +1086,11 @@ void CNewUIMuHelper::Reset()
     _TempConfig.bPickExtraItems = false;
     _TempConfig.aExtraItems.clear();
 
+    _TempConfig.bPickMagicItems = false;
+    _TempConfig.bAutoNpcBuff = false;
+    _TempConfig.bAutoBuyPotions = false;
+    _TempConfig.bAutoStoreVault = false;
+
     ApplyConfig();
 }
 
@@ -1099,7 +1156,11 @@ void CNewUIMuHelper::ApplyConfig()
     m_CheckBoxList[CHECKBOX_ID_PICK_ZEN].box->RegisterBoxState(_TempConfig.bPickZen);
     m_CheckBoxList[CHECKBOX_ID_PICK_EXCELLENT].box->RegisterBoxState(_TempConfig.bPickExcellent);
     m_CheckBoxList[CHECKBOX_ID_PICK_ANCIENT].box->RegisterBoxState(_TempConfig.bPickAncient);
+    m_CheckBoxList[CHECKBOX_ID_PICK_MAGIC].box->RegisterBoxState(_TempConfig.bPickMagicItems);
     m_CheckBoxList[CHECKBOX_ID_ADD_OTHER_ITEM].box->RegisterBoxState(_TempConfig.bPickExtraItems);
+    m_CheckBoxList[CHECKBOX_ID_AUTO_NPC_BUFF].box->RegisterBoxState(_TempConfig.bAutoNpcBuff);
+    m_CheckBoxList[CHECKBOX_ID_AUTO_BUY_POTIONS].box->RegisterBoxState(_TempConfig.bAutoBuyPotions);
+    m_CheckBoxList[CHECKBOX_ID_AUTO_STORE_VAULT].box->RegisterBoxState(_TempConfig.bAutoStoreVault);
 
     m_CheckBoxList[CHECKBOX_ID_AUTO_ACCEPT_FRIEND].box->RegisterBoxState(_TempConfig.bAutoAcceptFriend);
     m_CheckBoxList[CHECKBOX_ID_AUTO_ACCEPT_GUILD].box->RegisterBoxState(_TempConfig.bAutoAcceptGuild);
@@ -1238,6 +1299,27 @@ bool CNewUIMuHelper::Render()
     RenderIconList();
     RenderTextList();
     RenderBtnList();
+
+    // "Recommended AFK spots" entry bar (above the Save/Init/Close row).
+    {
+        bool hover = CheckMouseIn(m_Pos.x + AFK_SPOTS_BTN_X, m_Pos.y + AFK_SPOTS_BTN_Y, AFK_SPOTS_BTN_W, AFK_SPOTS_BTN_H);
+        glColor4f(hover ? 0.35f : 0.15f, hover ? 0.08f : 0.03f, 0.03f, 0.9f);
+        RenderColor((float)(m_Pos.x + AFK_SPOTS_BTN_X), (float)(m_Pos.y + AFK_SPOTS_BTN_Y),
+            (float)AFK_SPOTS_BTN_W, (float)AFK_SPOTS_BTN_H);
+        glColor4f(0.6f, 0.0f, 0.0f, 1.0f);
+        RenderColor((float)(m_Pos.x + AFK_SPOTS_BTN_X), (float)(m_Pos.y + AFK_SPOTS_BTN_Y),
+            (float)AFK_SPOTS_BTN_W, 1.0f);
+        RenderColor((float)(m_Pos.x + AFK_SPOTS_BTN_X), (float)(m_Pos.y + AFK_SPOTS_BTN_Y + AFK_SPOTS_BTN_H - 1),
+            (float)AFK_SPOTS_BTN_W, 1.0f);
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+        g_pRenderText->SetFont(g_hFontBold);
+        g_pRenderText->SetTextColor(hover ? 0xFFFFCC66 : 0xFFFFFFFF);
+        g_pRenderText->RenderText(m_Pos.x + AFK_SPOTS_BTN_X, m_Pos.y + AFK_SPOTS_BTN_Y + 7,
+            I18N::Game::AfkSpots, AFK_SPOTS_BTN_W, 0, RT3_WRITE_CENTER);
+        g_pRenderText->SetTextColor(TextColor);
+        g_pRenderText->SetFont(g_hFont);
+    }
 
     if (m_iCurrentOpenTab == 0)
     {

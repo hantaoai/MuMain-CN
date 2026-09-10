@@ -325,6 +325,9 @@ bool SEASON3B::CNewUINPCShop::InventoryProcess()
     if (!m_pNewInventoryCtrl)	return false;
     if (!pPickedItem)			return false;
     ITEM* pItem = pPickedItem->GetItem();
+    // The dragged item can vanish between frames (server-side move/delete);
+    // bail rather than dereferencing null in IsSellingBan/ItemValue below.
+    if (!pItem)					return false;
 
     if (IsSellingBan(pItem))	m_pNewInventoryCtrl->SetSquareColorNormal(1.0f, 0.0f, 0.0f);
     else	m_pNewInventoryCtrl->SetSquareColorNormal(0.1f, 0.4f, 0.8f);
@@ -483,6 +486,11 @@ DWORD SEASON3B::CNewUINPCShop::GetShopState()
 int SEASON3B::CNewUINPCShop::GetPointedItemIndex()
 {
     return m_pNewInventoryCtrl->GetPointedSquareIndex();
+}
+
+SEASON3B::CNewUIInventoryCtrl* SEASON3B::CNewUINPCShop::GetInventoryCtrl() const
+{
+    return m_pNewInventoryCtrl;
 }
 
 void SEASON3B::CNewUINPCShop::SetStandbyItemKey(DWORD dwItemKey)

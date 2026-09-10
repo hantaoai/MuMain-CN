@@ -48,6 +48,7 @@
 #include "UI/NewUI/Inventory/NewUISetItemExplanation.h"
 #include "UI/NewUI/HUD/NewUIQuickCommandWindow.h"
 #include "UI/NewUI/HUD/NewUIMoveCommandWindow.h"
+#include "UI/NewUI/HUD/NewUIAfkSpotWindow.h"
 #include "UI/NewUI/Combat/NewUIDuelWindow.h"
 #include "UI/NewUI/Combat/NewUISeigeWarfare.h"
 #include "UI/NewUI/Character/NewUINameWindow.h"
@@ -192,6 +193,7 @@ namespace SEASON3B
         CNewUISetItemExplanation* m_pNewSetItemExplanation;
         CNewUIQuickCommandWindow* m_pNewQuickCommandWindow;
         CNewUIMoveCommandWindow* m_pNewMoveCommandWindow;
+        CNewUIAfkSpotWindow* m_pNewAfkSpotWindow;
         CNewUIDuelWindow* m_pNewDuelWindow;
         CNewUINameWindow* m_pNewNameWindow;
         CNewUISiegeWarfare* m_pNewSiegeWarfare;

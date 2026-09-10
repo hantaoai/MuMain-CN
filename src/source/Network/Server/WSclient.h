@@ -3681,7 +3681,10 @@ typedef struct
     BYTE bAutoAcceptFriend : 1;              // Index: 33 (bit 1)
     BYTE bAutoAcceptGuild : 1;               // Index: 33 (bit 2)
     BYTE bFallbackBasicAttack : 1;           // Index: 33 (bit 3)
-    BYTE : 4;                                // Unused bits of Index 33
+    BYTE bPickMagicItems : 1;                // Index: 33 (bit 4) - 拾取蓝装
+    BYTE bAutoNpcBuff : 1;                   // Index: 33 (bit 5) - 自动领NPC Buff
+    BYTE bAutoBuyPotions : 1;                // Index: 33 (bit 6) - 没药自动买
+    BYTE bAutoStoreVault : 1;                // Index: 33 (bit 7) - 满包自动存仓
 
     BYTE _UnusedPadding[35];                 // Index: 34 (35 bytes remaining)
     char ExtraItems[12][15];                 // Index: 69

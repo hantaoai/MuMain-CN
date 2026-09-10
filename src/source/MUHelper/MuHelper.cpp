@@ -85,7 +85,7 @@ namespace MUHelper
 
     void CMuHelper::TriggerStart()
     {
-        if (!Hero->SafeZone)
+        if (!Hero->SafeZone || m_townRun.Active)
             SocketClient->ToGameServer()->SendMuHelperStatusChangeRequest(0);
     }
 
@@ -103,6 +103,7 @@ namespace MUHelper
 
         m_iTotalCost = 0;
         m_iComboState = 0;
+        m_townRun.Reset();
         m_iCurrentBuffIndex = 0;
         m_iCurrentBuffPartyIndex = 0;
         m_iCurrentHealPartyIndex = 0;
@@ -129,7 +130,70 @@ namespace MUHelper
     void CMuHelper::Stop()
     {
         m_bActive = false;
+        m_townRun.Reset();
         g_ConsoleDebug->Write(MCD_NORMAL, L"[MU Helper] Stopped");
+    }
+
+    void CMuHelper::GoAfkSpot(int x, int y)
+    {
+        if (m_townRun.Active)
+        {
+            return; // a town/AFK run is already in progress
+        }
+
+        // Prime the helper runtime so WorkLoop drives the town run, but do NOT call
+        // Start(): it would m_townRun.Reset() and pin m_posOriginal to the current
+        // tile. The town run owns the origin (the chosen spot) for this sequence.
+        if (!m_bActive)
+        {
+            m_iTotalCost = 0;
+            m_iComboState = 0;
+            m_iCurrentBuffIndex = 0;
+            m_iCurrentBuffPartyIndex = 0;
+            m_iCurrentHealPartyIndex = 0;
+            m_iCurrentTarget = -1;
+            m_iCurrentSkill = (ActionSkillType)m_config.aiSkill[0];
+            m_iCurrentItem = MAX_ITEMS;
+            m_iHuntingDistance = ComputeDistanceByRange(m_config.iHuntingRange);
+            m_iObtainingDistance = ComputeDistanceByRange(m_config.iObtainingRange);
+            m_iSecondsElapsed = 0;
+            m_iSecondsAway = 0;
+            m_iLoopCounter = 0;
+            m_bTimerActivatedBuffOngoing = false;
+            m_bPetActivated = false;
+            m_bActive = true;
+        }
+
+        m_posOriginal = { x, y };
+        m_townRun.RequestAfkRun(x, y);
+    }
+
+    void CMuHelper::OnAfkArrived()
+    {
+        // The town run has Reset() itself and we are standing at the hunting spot.
+        // m_bActive is already true (GoAfkSpot primed it); finish the per-session
+        // init that Start() normally does and tell the server the helper is on.
+        if (!m_bActive)
+        {
+            m_bActive = true;
+        }
+
+        m_posOriginal = { Hero->PositionX, Hero->PositionY };
+        m_iCurrentTarget = -1;
+        m_iCurrentBuffIndex = 0;
+        m_iCurrentBuffPartyIndex = 0;
+        m_iCurrentHealPartyIndex = 0;
+        m_iComboState = 0;
+        m_iLoopCounter = 0;
+        m_iSecondsElapsed = 0;
+        m_iSecondsAway = 0;
+
+        // Out of town now, so the !SafeZone gate passes.
+        if (!Hero->SafeZone)
+        {
+            TriggerStart();
+        }
+        g_ConsoleDebug->Write(MCD_NORMAL, L"[MU Helper] AFK spot arrived; hunting.");
     }
 
     void CMuHelper::WorkLoop(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
@@ -139,14 +203,28 @@ namespace MUHelper
             return;
         }
 
-        if (Hero->SafeZone)
+        if (Hero->SafeZone && !m_townRun.Active)
         {
             g_ConsoleDebug->Write(MCD_NORMAL, L"[MU Helper] Entered safezone. Stopping.");
             TriggerStop();
             return;
         }
 
-        Work();
+        // The town run evaluates its triggers every tick (even when idle) and,
+        // once an errand starts, owns the tick (warping/walking/interacting in
+        // town) so combat/pickup/regroup are skipped until it returns false.
+        try
+        {
+            if (!m_townRun.Update())
+            {
+                Work();
+            }
+        }
+        catch (...)
+        {
+            g_ConsoleDebug->Write(MCD_NORMAL, L"[MU Helper] Town run exception. Ignoring...");
+            Work();
+        }
 
         if (m_iLoopCounter++ == 4)
         {
@@ -578,6 +656,25 @@ namespace MUHelper
                 if (iPotionIndex != -1)
                 {
                     SendRequestUse(iPotionIndex, 0);
+                }
+            }
+        }
+
+        // Auto-buy potions also implies drinking mana potions (the stock it buys).
+        if (m_config.bAutoBuyPotions)
+        {
+            int64_t iMana = CharacterAttribute->Mana;
+            int64_t iManaMax = CharacterAttribute->ManaMax;
+            if (iManaMax > 0 && iMana > 0)
+            {
+                int64_t iManaRemaining = (iMana * 100 + iManaMax - 1) / iManaMax;
+                if (iManaRemaining <= m_config.iPotionThreshold)
+                {
+                    int iManaIndex = g_pMyInventory->FindManaItemIndex();
+                    if (iManaIndex != -1)
+                    {
+                        SendRequestUse(iManaIndex, 0);
+                    }
                 }
             }
         }
@@ -1270,7 +1367,8 @@ namespace MUHelper
         if ((m_config.bPickZen && IsMoneyItem(pItem))
             || (m_config.bPickJewel && IsJewelItem(pItem))
             || (m_config.bPickAncient && IsAncientItem(pItem))
-            || (m_config.bPickExcellent && IsExcellentItem(pItem)))
+            || (m_config.bPickExcellent && IsExcellentItem(pItem))
+            || (m_config.bPickMagicItems && IsMagicItem(pItem)))
         {
             return true;
         }
