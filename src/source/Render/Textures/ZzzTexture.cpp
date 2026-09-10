@@ -256,6 +256,11 @@ void DeleteBitmap(GLuint uiTextureIndex, bool bForce)
 }
 void PopUpErrorCheckMsgBox(const wchar_t* szErrorMsg, bool bForceDestroy)
 {
+    // GLP-DIAG: this path calls ExitProcess(0) and previously left no trace in
+    // MuError.log, so a world-entry asset failure looked like a silent crash.
+    g_ErrorReport.Write(L"[FATAL] PopUpErrorCheckMsgBox(bForceDestroy=%d): %ls\r\n",
+                        bForceDestroy ? 1 : 0, szErrorMsg ? szErrorMsg : L"(null)");
+
     wchar_t szMsg[1024] = { 0, };
     wcscpy(szMsg, szErrorMsg);
 
@@ -268,8 +273,10 @@ void PopUpErrorCheckMsgBox(const wchar_t* szErrorMsg, bool bForceDestroy)
         int iResult = MessageBox(g_hWnd, szMsg, L"ErrorCheckBox", MB_YESNO | MB_ICONERROR);
         if (IDYES == iResult)
         {
+            g_ErrorReport.Write(L"[FATAL] PopUpErrorCheckMsgBox: user chose YES (continue).\r\n");
             return;
         }
+        g_ErrorReport.Write(L"[FATAL] PopUpErrorCheckMsgBox: user chose NO (exit).\r\n");
     }
 
     if (SocketClient != nullptr)

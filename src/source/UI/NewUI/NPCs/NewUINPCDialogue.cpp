@@ -21,6 +21,26 @@ CNewUINPCDialogue::CNewUINPCDialogue()
     m_pNewUIMng = NULL;
     m_Pos.x = m_Pos.y = 0;
     m_dwContributePoint = 0;
+
+    // DXP-NPC: the paging fields drive RenderText()'s array indices
+    // (m_aszNPCWords[i + ND_NPC_MAX_LINE_PER_PAGE * m_nSelNPCPage] and the
+    // sel-text page offset). They were never initialized, so if SetCurNPCWords()
+    // early-returns (e.g. an NPC whose dialog words resolve to NULL/empty) they
+    // stay as garbage (0xCCCCCCCC in debug) and RenderText() indexes out of the
+    // static arrays into a wild pointer -> access violation. OpenMU warns exactly
+    // this: "If the game client doesn't have a dialog for this npc, it will crash."
+    // Initialize every one so a missing/empty dialog degrades to a blank, safe view
+    // instead of crashing.
+    m_nSelNPCPage = 0;
+    m_nMaxNPCPage = 0;
+    m_nSelSelTextPage = 0;
+    m_nMaxSelTextPage = 0;
+    m_eLowerView = SEL_TEXTS_MODE;
+    memset(m_anSelTextLine, 0, sizeof(m_anSelTextLine));
+    memset(m_anSelTextLinePerPage, 0, sizeof(m_anSelTextLinePerPage));
+    memset(m_anSelTextCountPerPage, 0, sizeof(m_anSelTextCountPerPage));
+    memset(m_aszNPCWords[0], 0, sizeof(m_aszNPCWords));
+    memset(m_aszSelTexts[0], 0, sizeof(m_aszSelTexts));
 }
 
 CNewUINPCDialogue::~CNewUINPCDialogue()
@@ -414,7 +434,17 @@ void CNewUINPCDialogue::SetCurNPCWords(int nQuestListCount)
         pszSrc, 160);
 
     if (1 > nLine)
+    {
+        // No words (pszSrc NULL/empty) for this dialog. Fall through to a safe
+        // empty single page instead of returning with the paging fields left
+        // uninitialized -- RenderText() indexes m_aszNPCWords[7*m_nSelNPCPage]
+        // with them and would otherwise read a wild pointer and crash.
+        m_nMaxNPCPage = 0;
+        m_eLowerView = SEL_TEXTS_MODE;
+        m_nSelNPCPage = 0;
+        m_btnProgressR.Lock();
         return;
+    }
 
     m_nMaxNPCPage = (nLine - 1) / ND_NPC_MAX_LINE_PER_PAGE;
     if (1 <= m_nMaxNPCPage)
@@ -496,6 +526,11 @@ void CNewUINPCDialogue::CalculateSelTextMaxPage(int nSelTextCount)
 void CNewUINPCDialogue::SetQuestListText(DWORD* adwSrcQuestIndex, int nIndexCount)
 {
     _ASSERT(0 <= nIndexCount && nIndexCount <= ND_QUEST_INDEX_MAX_COUNT);
+
+    // Clamp in release too - a malformed/over-long server packet would otherwise
+    // overflow m_adwQuestIndex / m_anSelTextLine (the assert compiles out).
+    if (nIndexCount < 0) nIndexCount = 0;
+    if (nIndexCount > ND_QUEST_INDEX_MAX_COUNT) nIndexCount = ND_QUEST_INDEX_MAX_COUNT;
 
     ::memset(m_adwQuestIndex, 0, sizeof(DWORD) * ND_QUEST_INDEX_MAX_COUNT);
     ::memcpy(m_adwQuestIndex, adwSrcQuestIndex, sizeof(DWORD) * nIndexCount);

@@ -123,6 +123,10 @@ void InitTerrainMappingLayer()
 
 void ExitProgram()
 {
+    // GLP-DIAG: PostQuitMessage(0) previously left no MuError.log trace, so a
+    // terrain attribute validation failure at world entry looked like a silent
+    // crash. Record it before showing the dialog.
+    g_ErrorReport.Write(L"[FATAL] ExitProgram(): terrain attribute validation failed (DataError).\r\n");
     MessageBoxW(g_hWnd, I18N::Game::DataError, NULL, MB_OK);
     PostQuitMessage(0);
 }

@@ -10426,6 +10426,13 @@ void ReceiveOtherPlayerGensInfluenceViewport(const BYTE* ReceiveBuffer)
         auto Data2 = (LPPMSG_GENS_MEMBER_VIEWPORT_INFO)(ReceiveBuffer + nOffset);
         int nKey = ((int)(Data2->m_byNumberH & 0x7f) << 8) + Data2->m_byNumberL;
         int nIndex = FindCharacterIndex(nKey);
+        // FindCharacterIndex returns MAX_CHARACTERS_CLIENT (one past the end)
+        // when no live character matches - skip instead of writing out of bounds.
+        if (nIndex < 0 || nIndex >= MAX_CHARACTERS_CLIENT)
+        {
+            nOffset += sizeof(PMSG_GENS_MEMBER_VIEWPORT_INFO);
+            continue;
+        }
         CHARACTER* c = &CharactersClient[nIndex];
 
         c->m_byGensInfluence = Data2->m_byInfluence;
@@ -10919,8 +10926,11 @@ void ReceiveBCNPCRepair(const BYTE* ReceiveBuffer)
     {
         LPPMSG_NPCDBLIST pNPCInfo = nullptr;
         pNPCInfo = g_SenatusInfo.GetNPCInfo(Data->iNpcNumber, Data->iNpcIndex);
-        pNPCInfo->iNpcHp = Data->iNpcHP;
-        pNPCInfo->iNpcMaxHp = Data->iNpcMaxHP;
+        if (pNPCInfo)
+        {
+            pNPCInfo->iNpcHp = Data->iNpcHP;
+            pNPCInfo->iNpcMaxHp = Data->iNpcMaxHP;
+        }
     }
     break;
     case 2:
@@ -10944,6 +10954,8 @@ void ReceiveBCNPCUpgrade(const BYTE* ReceiveBuffer)
     {
         LPPMSG_NPCDBLIST pNPCInfo = nullptr;
         pNPCInfo = g_SenatusInfo.GetNPCInfo(Data->iNpcNumber, Data->iNpcIndex);
+        if (pNPCInfo == nullptr)
+            break;
         if (Data->iNpcUpType == 1)
             pNPCInfo->iNpcDfLevel = Data->iNpcUpValue;
         else if (Data->iNpcUpType == 2)

@@ -8,8 +8,16 @@ namespace Core::Time
 {
     FrameTimerScheduler& FrameTimerScheduler::Instance()
     {
-        static FrameTimerScheduler instance;
-        return instance;
+        // Heap-allocate the singleton and intentionally never destroy it.
+        // Subsystems call Kill() during static destruction (e.g. CSlideHelpMgr's
+        // destructor, which runs when CNewUISystem is torn down) AFTER this
+        // function-local static would otherwise have been destroyed, so a stack
+        // static here leaves a use-after-free (AV reading freed m_timers at
+        // offset 0x1C on shutdown). Leaking one tiny object at process exit is
+        // the standard, safe way to guarantee the scheduler outlives every
+        // subsystem that references it during teardown.
+        static FrameTimerScheduler* instance = new FrameTimerScheduler;
+        return *instance;
     }
 
     std::uint64_t FrameTimerScheduler::NowMs()

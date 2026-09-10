@@ -72,12 +72,9 @@ extern bool Destroy;
 extern double WorldTime;
 extern float FPS_ANIMATION_FACTOR;
 
-static bool g_bShowDebugInfo =
-#ifdef _DEBUG
-    true;
-#else
-    false;
-#endif
+// Debug overlay (top-left) kept OFF by default. Toggle at runtime with
+// the "$details on/off" chat command if you need it.
+static bool g_bShowDebugInfo = false;
 
 static bool g_bShowFpsCounter = false;
 
