@@ -12887,4 +12887,67 @@
   <data name="DefaultFont" xml:space="preserve">
     <value>預設</value>
   </data>
+  <data name="BasicAttackFallback" xml:space="preserve">
+    <value>基礎攻擊回退</value>
+  </data>
+  <data name="Checking server availability" xml:space="preserve">
+    <value>正在檢查伺服器可用性</value>
+  </data>
+  <data name="Connection lost" xml:space="preserve">
+    <value>連線已中斷</value>
+  </data>
+  <data name="Entering the game" xml:space="preserve">
+    <value>正在進入遊戲</value>
+  </data>
+  <data name="Loading character list" xml:space="preserve">
+    <value>正在載入角色清單</value>
+  </data>
+  <data name="Logging in" xml:space="preserve">
+    <value>正在登入</value>
+  </data>
+  <data name="LoginRememberPassword" xml:space="preserve">
+    <value>記住密碼</value>
+  </data>
+  <data name="LoginRememberUsername" xml:space="preserve">
+    <value>記住帳號</value>
+  </data>
+  <data name="LoginSavePasswordWarningBody" xml:space="preserve">
+    <value>儲存密碼將使使用這台電腦的任何人都可以登入您的帳號。請僅在您信任的電腦上這樣做。是否儲存密碼？</value>
+  </data>
+  <data name="LoginSavePasswordWarningTitle" xml:space="preserve">
+    <value>警告！！！</value>
+  </data>
+  <data name="LoginTrustWarning" xml:space="preserve">
+    <value>請僅在您信任的電腦上儲存密碼。</value>
+  </data>
+  <data name="Retrying in seconds" xml:space="preserve">
+    <value>%d 秒後重試...</value>
+  </data>
+  <data name="Pick Magic Items" xml:space="preserve">
+    <value>拾取藍裝</value>
+  </data>
+  <data name="Auto Town Buff" xml:space="preserve">
+    <value>自動領取 Buff</value>
+  </data>
+  <data name="Auto Buy Potions" xml:space="preserve">
+    <value>自動購買藥水</value>
+  </data>
+  <data name="Auto Store to Vault" xml:space="preserve">
+    <value>自動存入倉庫</value>
+  </data>
+  <data name="AfkSpots" xml:space="preserve">
+    <value>推薦掛機點</value>
+  </data>
+  <data name="AfkSpotsCoord" xml:space="preserve">
+    <value>座標</value>
+  </data>
+  <data name="AfkSpotsLevel" xml:space="preserve">
+    <value>等級</value>
+  </data>
+  <data name="AfkSpotsMonsters" xml:space="preserve">
+    <value>怪物</value>
+  </data>
+  <data name="AfkSpotsNone" xml:space="preserve">
+    <value>本地圖無推薦掛機點</value>
+  </data>
 </root>

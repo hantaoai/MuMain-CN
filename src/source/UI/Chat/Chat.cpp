@@ -472,7 +472,7 @@ void CreateChat(wchar_t* character_name, const wchar_t* chat_text, CHARACTER* Ow
             }
             else
             {
-                if (c->LifeTime[0] > 0)
+                if (c->LifeTime[0] > 0 && wcscmp(chat_text, c->Text[0]) != 0)
                 {
                     wcscpy(c->Text[1], c->Text[0]);
                     c->LifeTime[1] = c->LifeTime[0];

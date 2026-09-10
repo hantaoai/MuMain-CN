@@ -331,7 +331,7 @@ constexpr int ITEM_ACTION_BLOCK_SELL_ONLY = 1;      // 0,0,0,0,1,0 - Blocks sell
 
 #define MAX_LETTERTEXT_LENGTH		1000
 #define MAX_CHATROOM_TEXT_LENGTH	150
-#define MAX_LANGUAGE_NAME_LENGTH	4
+#define MAX_LANGUAGE_NAME_LENGTH	16
 
 #define MAX_GATES           512
 

@@ -12931,4 +12931,31 @@
   <data name="DefaultFont" xml:space="preserve">
     <value>Default</value>
   </data>
+  <data name="Pick Magic Items" xml:space="preserve">
+    <value>Pick Magic Items</value>
+  </data>
+  <data name="Auto Town Buff" xml:space="preserve">
+    <value>Auto Town Buff</value>
+  </data>
+  <data name="Auto Buy Potions" xml:space="preserve">
+    <value>Auto Buy Potions</value>
+  </data>
+  <data name="Auto Store to Vault" xml:space="preserve">
+    <value>Auto Store to Vault</value>
+  </data>
+  <data name="AfkSpots" xml:space="preserve">
+    <value>Afk Spots</value>
+  </data>
+  <data name="AfkSpotsCoord" xml:space="preserve">
+    <value>Coord</value>
+  </data>
+  <data name="AfkSpotsLevel" xml:space="preserve">
+    <value>Level</value>
+  </data>
+  <data name="AfkSpotsMonsters" xml:space="preserve">
+    <value>Monsters</value>
+  </data>
+  <data name="AfkSpotsNone" xml:space="preserve">
+    <value>No recommended spots on this map</value>
+  </data>
 </root>
